@@ -1,0 +1,28 @@
+{
+  "configurations": [
+    {
+      "name": "X64",
+      "includePath": [
+        "${workspaceFolder}\\Source\\Tool\\Application\\KProfilerApplication\\**",
+        "${workspaceFolder}\\Source\\Tool\\Include\\**",
+        "${workspaceFolder}\\Source\\Tool\\**",
+        "${workspaceFolder}\\Package\\Current\\EASTL\\include\\**",
+        "${workspaceFolder}\\Package\\Current\\EASTL\\include\\Common\\**",
+        "${workspaceFolder}\\Package\\Current\\imgui-docking\\include\\**",
+        "${workspaceFolder}\\Package\\Current\\json-schema-validator\\include\\**",
+        "${workspaceFolder}\\Package\\Current\\magic_enum\\include\\**",
+        "${workspaceFolder}\\Package\\Current\\mimalloc\\include\\**",
+        "${workspaceFolder}\\Package\\Current\\nlohmann_json\\include\\**",
+        "${workspaceFolder}\\Package\\Current\\glfw\\include\\**",
+        "${workspaceFolder}\\Package\\Current\\gtest\\include\\**"
+      ],
+      "defines": ["_DEBUG", "UNICODE", "_UNICODE"],
+      "windowsSdkVersion": "10.0.26100.0",
+      "compilerPath": "cl.exe",
+      "cStandard": "c23",
+      "cppStandard": "c++20",
+      "intelliSenseMode": "windows-msvc-x64"
+    }
+  ],
+  "version": 4
+}

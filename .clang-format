@@ -1,0 +1,25 @@
+---
+# Default
+BasedOnStyle: WebKit
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+---
+# C++
+Language: Cpp
+Standard: c++20
+AlignAfterOpenBracket: Align
+AlignOperands: true
+AlignTrailingComments: true
+AllowShortBlocksOnASingleLine: false
+AllowShortFunctionsOnASingleLine: false
+AlwaysBreakTemplateDeclarations: true
+BreakBeforeBraces: Stroustrup
+ColumnLimit: 0
+MaxEmptyLinesToKeep: 2
+NamespaceIndentation: None
+SortIncludes: false
+SpaceBeforeCpp11BracedList: false
+SpaceBeforeParens: ControlStatements
+---
+# Other languages if available
