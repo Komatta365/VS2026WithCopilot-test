@@ -39,3 +39,7 @@
 
 # debug information files
 *.dwo
+/VS2026WithCopilot-test/x64
+/VS2026WithCopilot-test/.vs
+/VS2026WithCopilot-test/VS2026WithCopilot-test/x64
+/.vs
