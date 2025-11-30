@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="VS2026WithCopilot-test/VS2026WithCopilot-test.vcxproj" />
+  <Project Path="VS2026WithCopilot-test/VS2026WithCopilot-test.vcxproj" Id="304eb4c0-6797-466b-9f57-160a45c91a07" />
 </Solution>
