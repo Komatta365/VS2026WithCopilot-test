@@ -133,13 +133,13 @@ void Render()
     ctx.commandList->RSSetScissorRects(1, &scissor);
 
     // バックバッファを PRESENT -> RENDER_TARGET に遷移
-    D3D12_RESOURCE_BARRIER barrier{};
-    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-    barrier.Transition.pResource = ctx.renderTargets[ctx.frameIndex].Get();
-    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-    ctx.commandList->ResourceBarrier(1, &barrier);
+    D3D12_RESOURCE_BARRIER barrier{};                                         // リソースの状態遷移を定義する構造体。
+    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;                    // バリアの種類を「状態遷移」に設定。
+    barrier.Transition.pResource = ctx.renderTargets[ctx.frameIndex].Get();   // 遷移対象のリソース（現在のバックバッファ）を指定。
+    barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;            // 現在の状態は「表示中 (PRESENT)」。
+    barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;       // 次に使う状態は「レンダーターゲット (描画先)」。
+    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES; // 全サブリソースを対象に遷移を行う。
+    ctx.commandList->ResourceBarrier(1, &barrier);                            // コマンドリストにバリアを記録。
 
     // 現フレームの RTV を設定しクリアカラーで初期化
     D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle(ctx.rtvHeap->GetCPUDescriptorHandleForHeapStart());
@@ -208,7 +208,7 @@ void WaitForPreviousFrame()
     }
 
     // 次フレーム用にフェンス値をインクリメント（以降のフレームはこの新しい値をターゲットに待機する）
-    ctx.fenceValue++;
+    ++ctx.fenceValue;
 
     // スワップチェーンの現在のバックバッファインデックスを取得
     // これで次フレームが使用すべきバックバッファを特定できる（2重/3重バッファリング対応）
