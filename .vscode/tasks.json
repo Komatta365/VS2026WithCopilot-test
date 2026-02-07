@@ -1,31 +1,43 @@
 {
-  // See https://go.microsoft.com/fwlink/?LinkId=733558
-  // for the documentation about the tasks.json format
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "echo Komax",
-      "type": "shell",
-      "command": "echo Hello Komax2",
-      "problemMatcher": [],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      }
-    },
-    {
-      "label": "Convert Encoding",
-      "type": "shell",
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "command": "python",
-      "args": ["Source/Script/convert_encoding.py"],
-      "problemMatcher": [],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      }
-    }
-  ]
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "echo Komax",
+            "type": "shell",
+            "command": "echo Hello Komax2",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Convert Encoding",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "command": "python",
+            "args": ["Source/Script/convert_encoding.py"],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Open in Visual Studio",
+            "type": "shell",
+            "command": "\"D:\\repository\\Github\\Komatta365\\VSTools\\KVisualStudioOpenFile\\KVisualStudioOpenFile\\bin\\Release\\net10.0\\KVisualStudioOpenFile.exe\"",
+            "args": [
+                "-s",
+                "VS2026WithCopilot-test",
+                "-f",
+                "\"${file}\",${lineNumber},${columnNumber}"
+            ],
+            "problemMatcher": []
+        }
+    ]
 }

@@ -23,12 +23,18 @@
     <ClCompile Include="..\..\Source\Render\DirectX12TriangleSample.cpp">
       <Filter>ソース ファイル\Render</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Render\SpriteRenderer.cpp">
+      <Filter>ソース ファイル\Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\Render\DirectXMain.h">
       <Filter>ソース ファイル\Render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Render\DirectX12TriangleSample.h">
+      <Filter>ソース ファイル\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Render\SpriteRenderer.h">
       <Filter>ソース ファイル\Render</Filter>
     </ClInclude>
   </ItemGroup>

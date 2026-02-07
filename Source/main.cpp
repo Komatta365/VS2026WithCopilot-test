@@ -1,5 +1,6 @@
 ﻿#include <windows.h>
 #include <exception>
+#include <winuser.h>
 #include "Render/DirectXMain.h"
 
 constexpr UINT WIDTH = 1280;
@@ -9,35 +10,45 @@ bool g_isRunning = true;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
+int WINAPI wWinMain(
+    _In_ HINSTANCE hInstance,
+    _In_opt_ HINSTANCE hPrevInstance,
+    _In_ PWSTR pCmdLine,
+    _In_ int nCmdShow)
 {
     const wchar_t CLASS_NAME[] = L"DX12GameWindowClass";
 
+    // Initialize window class structure
     WNDCLASSEXW wc = {};
-    wc.cbSize = sizeof(wc);
-    wc.style = CS_HREDRAW | CS_VREDRAW;
-    wc.lpfnWndProc = WndProc;
-    wc.hInstance = hInstance;
-    wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-    wc.lpszClassName = CLASS_NAME;
+    wc.cbSize = sizeof(wc);                        // Set size of structure
+    wc.style = CS_HREDRAW | CS_VREDRAW;            // Redraw on horizontal/vertical resize
+    wc.lpfnWndProc = WndProc;                      // Window procedure callback
+    wc.hInstance = hInstance;                      // Application instance handle
+    wc.hCursor = LoadCursor(nullptr, IDC_ARROW);   // Standard arrow cursor
+    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1); // Default window background color
+    wc.lpszClassName = CLASS_NAME;                 // Window class identifier
 
+    // Register the window class with the system
     if (!RegisterClassExW(&wc)) {
-        return 0;
+        return 0; // Exit if registration fails
     }
 
     RECT windowRect = { 0, 0, static_cast<LONG>(WIDTH), static_cast<LONG>(HEIGHT) };
     AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 
+    // Create the main application window with extended window styles
     HWND hwnd = CreateWindowExW(
-        0,
-        CLASS_NAME,
-        L"DirectX12 Game Loop",
-        WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT,
-        windowRect.right - windowRect.left,
-        windowRect.bottom - windowRect.top,
-        nullptr, nullptr, hInstance, nullptr);
+        0,                                  // No extended window styles
+        CLASS_NAME,                         // Window class name
+        L"DirectX12 Game Loop",             // Window title
+        WS_OVERLAPPEDWINDOW,                // Standard overlapped window style
+        CW_USEDEFAULT, CW_USEDEFAULT,       // Default x, y position
+        windowRect.right - windowRect.left, // Adjusted window width
+        windowRect.bottom - windowRect.top, // Adjusted window height
+        nullptr,                            // No parent window
+        nullptr,                            // No menu
+        hInstance,                          // Application instance
+        nullptr);                           // No additional parameters
 
     if (!hwnd) {
         return 0;

@@ -14,14 +14,16 @@ struct D3D12Context {
     ComPtr<ID3D12CommandQueue> commandQueue;
     ComPtr<IDXGISwapChain3> swapChain;
     ComPtr<ID3D12DescriptorHeap> rtvHeap;
+    ComPtr<ID3D12DescriptorHeap> dsvHeap;
     ComPtr<ID3D12Resource> renderTargets[FRAME_COUNT];
+    ComPtr<ID3D12Resource> depthStencil;
     ComPtr<ID3D12CommandAllocator> commandAllocator;
     ComPtr<ID3D12GraphicsCommandList> commandList;
     ComPtr<ID3D12Fence> fence;
     UINT64 fenceValue = 0;
     HANDLE fenceEvent = nullptr;
     UINT rtvDescriptorSize = 0;
-    UINT frameIndex = 0;
+    UINT currentBackBufferIndex = 0;
     ComPtr<ID3D12RootSignature> rootSignature;
     ComPtr<ID3D12PipelineState> pipelineState;
     ComPtr<ID3D12Resource> vertexBuffer;

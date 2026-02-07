@@ -48,7 +48,7 @@ void InitializeTrianglePipeline(D3D12Context& ctx)
     // 頂点入力レイアウト（位置と色）を定義
     D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
         { "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-        { "COLOR",    0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 8, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 8, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
     };
 
     // 不透明な三角形向けのブレンド/ラスタライズ/深度ステンシルを設定
@@ -82,7 +82,7 @@ void InitializeTrianglePipeline(D3D12Context& ctx)
     rasterDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
 
     D3D12_DEPTH_STENCIL_DESC depthDesc{};
-    depthDesc.DepthEnable = FALSE;    // 2D 三角形のため深度は無効
+    depthDesc.DepthEnable = FALSE; // 2D 三角形のため深度は無効
     depthDesc.StencilEnable = FALSE;
 
     // 三角形用のパイプラインステートオブジェクト（PSO）を作成
@@ -104,15 +104,19 @@ void InitializeTrianglePipeline(D3D12Context& ctx)
     }
 
     // 3 つの色付き頂点を持つ頂点バッファを作成してアップロード
-    struct Vertex { float x, y; float r, g, b; };
+    struct Vertex {
+        float x, y;
+        float r, g, b;
+    };
     Vertex triangle[] = {
-        {  0.0f,  0.5f, 1.0f, 0.0f, 0.0f },
-        {  0.5f, -0.5f, 0.0f, 1.0f, 0.0f },
+        { 0.0f, 0.5f, 1.0f, 0.0f, 0.0f },
+        { 0.5f, -0.5f, 0.0f, 1.0f, 0.0f },
         { -0.5f, -0.5f, 0.0f, 0.0f, 1.0f },
     };
     const UINT vbSize = sizeof(triangle);
 
-    D3D12_HEAP_PROPERTIES heapProps{}; heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
+    D3D12_HEAP_PROPERTIES heapProps{};
+    heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
     D3D12_RESOURCE_DESC resDesc{};
     resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
     resDesc.Width = vbSize;
@@ -127,7 +131,8 @@ void InitializeTrianglePipeline(D3D12Context& ctx)
         throw std::runtime_error("頂点バッファの作成に失敗");
 
     // バッファをマップして頂点データをコピー
-    void* mapped = nullptr; D3D12_RANGE readRange{0,0};
+    void* mapped = nullptr;
+    D3D12_RANGE readRange{ 0, 0 };
     ctx.vertexBuffer->Map(0, &readRange, &mapped);
     std::memcpy(mapped, triangle, vbSize);
     ctx.vertexBuffer->Unmap(0, nullptr);
