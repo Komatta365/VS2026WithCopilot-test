@@ -1,6 +1,6 @@
 ---
 description: C/C++のコーディング規約
-applyTo: "**/*.c, **/*.cpp, **/*.h, **/*.hpp"
+applyTo: "Source/**/*.{c,cpp,h,hpp}"
 ---
 
 =============================
@@ -29,7 +29,7 @@ How I write code
 ・非同期ロードでは std::jthread と stop*token を利用します。
 ・ロード中断に対応できるデータ構造を使います。
 【スタイル】
-・命名規則：クラス名 PascalCase、関数名 camelCase、メンバ変数 m* 前置。
+・命名規則：クラス名 PascalCase、関数名 PascalCase、メンバ変数 m* 前置、ローカル変数名 camelCase。
 ・インクルードは最小限にし、ヘッダ肥大化を避けます。
 ・コメントは必要最小限で「意図」中心に記述します。
 

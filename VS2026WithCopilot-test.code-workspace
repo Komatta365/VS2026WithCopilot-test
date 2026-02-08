@@ -111,6 +111,6 @@
             "xutility": "cpp",
             "*.ipp": "cpp",
         },
-        "chat.useAgentSkills": true,
+        "chat.useAgentSkills": false,
     },
 }

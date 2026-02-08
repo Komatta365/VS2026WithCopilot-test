@@ -30,9 +30,13 @@ struct D3D12Context {
     D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 };
 
-inline D3D12Context& GetD3D12Context() { static D3D12Context ctx; return ctx; }
+inline D3D12Context& GetD3D12Context()
+{
+    static D3D12Context ctx;
+    return ctx;
+}
 
-void InitD3D12(HWND hwnd, UINT width, UINT height);
+[[nodiscard]] bool InitD3D12(HWND hwnd, UINT width, UINT height);
 void Update();
 void Render();
 void WaitForPreviousFrame();

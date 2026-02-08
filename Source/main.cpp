@@ -1,84 +1,104 @@
 ﻿#include <windows.h>
-#include <exception>
-#include <winuser.h>
+#include <chrono>
+#include <thread>
 #include "Render/DirectXMain.h"
 
 constexpr UINT WIDTH = 1280;
 constexpr UINT HEIGHT = 720;
+constexpr wchar_t WINDOW_CLASS_NAMO[] = L"DX12GameWindowClass";
+constexpr wchar_t WINDOW_TITLE[] = L"DirectX12 Game Loop";
 
-bool g_isRunning = true;
+// 60 FPS target
+constexpr auto TARGET_FRAME_TIME = std::chrono::milliseconds(16);
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK WndProc([[maybe_unused]] HWND hwnd, UINT msg, WPARAM wParam, [[maybe_unused]] LPARAM lParam);
 
 int WINAPI wWinMain(
     _In_ HINSTANCE hInstance,
-    _In_opt_ HINSTANCE hPrevInstance,
-    _In_ PWSTR pCmdLine,
+    [[maybe_unused]] _In_opt_ HINSTANCE hPrevInstance,
+    [[maybe_unused]] _In_ PWSTR pCmdLine,
     _In_ int nCmdShow)
 {
-    const wchar_t CLASS_NAME[] = L"DX12GameWindowClass";
-
-    // Initialize window class structure
     WNDCLASSEXW wc = {};
-    wc.cbSize = sizeof(wc);                        // Set size of structure
-    wc.style = CS_HREDRAW | CS_VREDRAW;            // Redraw on horizontal/vertical resize
-    wc.lpfnWndProc = WndProc;                      // Window procedure callback
-    wc.hInstance = hInstance;                      // Application instance handle
-    wc.hCursor = LoadCursor(nullptr, IDC_ARROW);   // Standard arrow cursor
-    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1); // Default window background color
-    wc.lpszClassName = CLASS_NAME;                 // Window class identifier
+    wc.cbSize = sizeof(wc);
+    wc.style = CS_HREDRAW | CS_VREDRAW;
+    wc.lpfnWndProc = WndProc;
+    wc.hInstance = hInstance;
+    wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+    if (!wc.hCursor) {
+        MessageBoxW(nullptr, L"Failed to load cursor", L"Error", MB_OK | MB_ICONERROR);
+        return -1;
+    }
+    wc.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
+    wc.lpszClassName = WINDOW_CLASS_NAMO;
 
-    // Register the window class with the system
     if (!RegisterClassExW(&wc)) {
-        return 0; // Exit if registration fails
-    }
-
-    RECT windowRect = { 0, 0, static_cast<LONG>(WIDTH), static_cast<LONG>(HEIGHT) };
-    AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE);
-
-    // Create the main application window with extended window styles
-    HWND hwnd = CreateWindowExW(
-        0,                                  // No extended window styles
-        CLASS_NAME,                         // Window class name
-        L"DirectX12 Game Loop",             // Window title
-        WS_OVERLAPPEDWINDOW,                // Standard overlapped window style
-        CW_USEDEFAULT, CW_USEDEFAULT,       // Default x, y position
-        windowRect.right - windowRect.left, // Adjusted window width
-        windowRect.bottom - windowRect.top, // Adjusted window height
-        nullptr,                            // No parent window
-        nullptr,                            // No menu
-        hInstance,                          // Application instance
-        nullptr);                           // No additional parameters
-
-    if (!hwnd) {
-        return 0;
-    }
-
-    try {
-        InitD3D12(hwnd, WIDTH, HEIGHT);
-    }
-    catch (const std::exception& e) {
-        MessageBoxA(hwnd, e.what(), "DirectX12 Initialization Failed", MB_OK | MB_ICONERROR);
+        MessageBoxW(nullptr, L"Window class registration failed", L"Error", MB_OK | MB_ICONERROR);
         return -1;
     }
 
-    ShowWindow(hwnd, nCmdShow ? nCmdShow : SW_SHOWDEFAULT);
+    RECT windowRect = { 0, 0, static_cast<LONG>(WIDTH), static_cast<LONG>(HEIGHT) };
+    if (!AdjustWindowRect(&windowRect, WS_OVERLAPPEDWINDOW, FALSE)) {
+        MessageBoxW(nullptr, L"Window rect adjustment failed", L"Error", MB_OK | MB_ICONERROR);
+        return -1;
+    }
+
+    HWND hwnd = CreateWindowExW(
+        0,
+        WINDOW_CLASS_NAMO,
+        WINDOW_TITLE,
+        WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT, CW_USEDEFAULT,
+        windowRect.right - windowRect.left,
+        windowRect.bottom - windowRect.top,
+        nullptr,
+        nullptr,
+        hInstance,
+        nullptr);
+
+    if (!hwnd) {
+        MessageBoxW(nullptr, L"Window creation failed", L"Error", MB_OK | MB_ICONERROR);
+        return -1;
+    }
+
+    if (!InitD3D12(hwnd, WIDTH, HEIGHT)) {
+        MessageBoxW(nullptr, L"DirectX12 initialization failed", L"Error", MB_OK | MB_ICONERROR);
+        return -1;
+    }
+
+    ShowWindow(hwnd, nCmdShow);
     UpdateWindow(hwnd);
 
-    // Game loop with PeekMessage for non-blocking message processing
     MSG msg = {};
-    while (g_isRunning) {
-        if (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE)) {
+    bool isRunning = true;
+    auto lastFrameTime = std::chrono::steady_clock::now();
+
+    while (isRunning) {
+        // Process all pending messages
+        while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT) {
-                g_isRunning = false;
+                isRunning = false;
+                break;
             }
             TranslateMessage(&msg);
             DispatchMessageW(&msg);
         }
-        else {
-            // Game update and render when no messages to process
-            Update();
-            Render();
+
+        if (isRunning) {
+            auto currentTime = std::chrono::steady_clock::now();
+            auto deltaTime = std::chrono::duration_cast<std::chrono::milliseconds>(
+                currentTime - lastFrameTime);
+
+            // Frame rate limiting for 60 FPS
+            if (deltaTime >= TARGET_FRAME_TIME) {
+                Update();
+                Render();
+                lastFrameTime = currentTime;
+            }
+            else {
+                // Yield CPU time to avoid busy-waiting
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            }
         }
     }
 
@@ -88,7 +108,7 @@ int WINAPI wWinMain(
     return static_cast<int>(msg.wParam);
 }
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc([[maybe_unused]] HWND hwnd, UINT msg, WPARAM wParam, [[maybe_unused]] LPARAM lParam)
 {
     switch (msg) {
     case WM_DESTROY:
