@@ -10,6 +10,7 @@
 #include "SpriteRenderer.h"
 #include "CubeRenderer.h"
 #include "../Game/GameLoop.h"
+
 #include <DirectXMath.h>
 #include <chrono>
 #include <algorithm>
